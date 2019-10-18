@@ -76,6 +76,7 @@ class Multioperator{
 	getImplement(First, Second){
 		let method = First.prototype[this._first];
 		if(method){
+			Second = Second.prototype[this._second];
 			return method.mapping.get(Second);
 		}
 	}
@@ -91,13 +92,22 @@ class Multioperator{
 			let method = First.prototype[this._first];
 			if(Second){
 				if(Second.prototype.hasOwnProperty(this._second)){
-					return metnod.mapping.get(Second);
+					return method.mapping.get(Second);
 				}
 			}
 			else{
 				return method.mapping(null);
 			}
 		}
+	}
+	
+	/**
+	 * Вызвать метод в контексте first с аргументом second
+	 * @param {any} first
+	 * @param {any} second
+	 */
+	call(first, second){
+		return (first)[this.key](second);
 	}
 }
 

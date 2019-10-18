@@ -81,5 +81,47 @@ describe('Multioperator', ()=>{
 			assert.equal((128n)[ADD](1.5), 129.5);
 		});
 	});
+	
+	describe('cross second', ()=>{
+		const oper = new Multioperator('oper');
+		
+		function Class1(){
+		}
+		function Class2(){
+		}
+		function Class3(){
+		}
+		function Class4(){
+		}
+		class Class5 extends Class2{}
+		
+		oper.def(Class1, Class2, ()=>('1-2'));
+		oper.def(Class3, Class4, ()=>('3-4'));
+		
+		it('own 1-3', ()=>{
+			let method = oper.getOwnImplement(Class1, Class3);
+			assert.ok(!method);
+		})
+		it('own 1-4', ()=>{
+			let method = oper.getOwnImplement(Class1, Class4);
+			assert.ok(!method);
+		})
+		it('own 1-5', ()=>{
+			let method = oper.getOwnImplement(Class1, Class5);
+			assert.ok(!method);
+		})
+		it('1-3', ()=>{
+			let method = oper.getImplement(Class1, Class3);
+			assert.ok(!method);
+		})
+		it('1-4', ()=>{
+			let method = oper.getImplement(Class1, Class4);
+			assert.ok(!method);
+		})
+		it('1-5', ()=>{
+			let method = oper.getImplement(Class1, Class5);
+			assert.ok(method);
+		})
+	});
 
 });
