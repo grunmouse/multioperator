@@ -1,5 +1,7 @@
 const Multimethod = require('./multimethod.js');
 
+const caller = (symbol)=>(a, b)=>(a[symbol](b));
+
 /**
  * Представляет бинарную мультифункцию, возможно с null во втором операнде
  * @class Multioperator
@@ -14,6 +16,16 @@ class Multioperator{
 		this.key = this._first;
 	}
 	
+	valueOf(){
+		return this.key;
+	}
+	
+	/**
+	 * Ссылку на экземпляр можно использовать вместо ключа при вызове метода
+	 */
+	toString(){
+		return this.key;
+	}
 
 	/**
 	 * Проверяет наличие у прототипа First соответствующего мультиметода
@@ -31,8 +43,11 @@ class Multioperator{
 	 * @void
 	 */
 	useName(First){
-		let proto = First.prototype;
-		proto[this.name] = proto[this._first];
+		const proto = First.prototype;
+		const key = this.key;
+		proto[this.name] = function(b){
+			return this[key](b);
+		};
 	}
 	
 	/**
@@ -46,6 +61,10 @@ class Multioperator{
 		if(!func){
 			func = Second;
 			Second = null;
+		}
+		
+		if(typeof func === 'symbol'){
+			func = caller(func);
 		}
 		
 		let method;
@@ -108,6 +127,10 @@ class Multioperator{
 	 */
 	call(first, second){
 		return (first)[this.key](second);
+	}
+	
+	get caller(){
+		return caller(this.key);
 	}
 }
 

@@ -31,6 +31,10 @@ describe('Multioperator', ()=>{
 		it('call', ()=>{
 			assert.equal((1)[ADD](2), 3);
 		});
+		
+		it('valueOf', ()=>{
+			assert.equal((1)[add](2), 3);
+		});
 	});
 	
 	describe('def unar', ()=>{
@@ -101,27 +105,27 @@ describe('Multioperator', ()=>{
 		it('own 1-3', ()=>{
 			let method = oper.getOwnImplement(Class1, Class3);
 			assert.ok(!method);
-		})
+		});
 		it('own 1-4', ()=>{
 			let method = oper.getOwnImplement(Class1, Class4);
 			assert.ok(!method);
-		})
+		});
 		it('own 1-5', ()=>{
 			let method = oper.getOwnImplement(Class1, Class5);
 			assert.ok(!method);
-		})
+		});
 		it('1-3', ()=>{
 			let method = oper.getImplement(Class1, Class3);
 			assert.ok(!method);
-		})
+		});
 		it('1-4', ()=>{
 			let method = oper.getImplement(Class1, Class4);
 			assert.ok(!method);
-		})
+		});
 		it('1-5', ()=>{
 			let method = oper.getImplement(Class1, Class5);
 			assert.ok(method);
-		})
+		});
 	});
 
 });
