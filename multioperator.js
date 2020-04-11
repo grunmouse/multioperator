@@ -2,6 +2,11 @@ const Multimethod = require('./multimethod.js');
 
 const caller = (symbol)=>(a, b)=>(a[symbol](b));
 
+const firstSet = Symbol('first-set');
+const secondSet = Symbol('second-set');
+
+const {MapOfSet} = require('@grunmouse/special-map');
+
 /**
  * Представляет бинарную мультифункцию, возможно с null во втором операнде
  * @class Multioperator
@@ -18,6 +23,23 @@ class Multioperator{
 	
 	valueOf(){
 		return this.key;
+	}
+	
+	static *itrFirst(First){
+		if(First[firstSet]) for(let oper of First[firstSet]){
+			let method = First[oper._first];
+			for(let [Second, func] of method.mapping){
+				yield [oper, First, Second, func];
+			}
+		}
+	}
+	
+	static *itrSecond(Second){
+		if(Second[secondSet]) for(let [oper, First] of Second[secondSet]){
+			let method = First[oper._first];
+			let func = method.mapping.get(Second);
+			yield [oper, First, Second, func];
+		}
 	}
 	
 	/**
@@ -76,11 +98,20 @@ class Multioperator{
 			method[this._first] = First;
 			First.prototype[this._first] = method;
 			//a.prototype[_first][_first] === a
+			
+			if(!First[firstSet]){
+				First[firstSet] = new Set();
+			}
+			First[firstSet].add(this);
 		}
 
 		if(Second){
 			Second.prototype[this._second] = Second;
 			// a.prototype[_second] === a
+			if(!Second[secondSet]){
+				Second[secondSet] = new MapOfSet();
+			}
+			Second[secondSet].add(this, First);
 		}
 		
 		method.mapping.set(Second, func);

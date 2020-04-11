@@ -14,5 +14,7 @@
     "email": "grunmouse@mail.ru"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@grunmouse/special-map": "link:..\\special-map"
+  }
 }

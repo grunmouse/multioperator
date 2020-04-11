@@ -24,7 +24,7 @@ const WeakMapWithNull = require('./weak-map-with-null.js');
  * @return {Multimethod}
  */
 function Multimethod(_second){
-	const mapping = new WeakMapWithNull();
+	const mapping = new Map();
 	
 	const method = function(second){
 		if(second == null){
