@@ -27,7 +27,7 @@ class Multioperator{
 	
 	static *itrFirst(First){
 		if(First[firstSet]) for(let oper of First[firstSet]){
-			let method = First[oper._first];
+			let method = First.prototype[oper._first];
 			for(let [Second, func] of method.mapping){
 				yield [oper, First, Second, func];
 			}
@@ -36,7 +36,7 @@ class Multioperator{
 	
 	static *itrSecond(Second){
 		if(Second[secondSet]) for(let [oper, First] of Second[secondSet]){
-			let method = First[oper._first];
+			let method = First.prototype[oper._first];
 			let func = method.mapping.get(Second);
 			yield [oper, First, Second, func];
 		}
