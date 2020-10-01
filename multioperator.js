@@ -68,6 +68,9 @@ class Multioperator{
 		const proto = First.prototype;
 		const key = this.key;
 		proto[this.name] = function(b){
+			if(!this[key]){
+				throw new Error(`Method Symbol(${this.name}) is not created in ${First} prototype`);
+			}
 			return this[key](b);
 		};
 	}
