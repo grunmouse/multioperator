@@ -26,13 +26,13 @@ const WeakMapWithNull = require('./weak-map-with-null.js');
 function Multimethod(_second){
 	const mapping = new Map();
 	
-	const method = function(second){
+	const method = function(second, ...param){
 		if(second == null){
 			let func = mapping.get(null);
 			if(!func){
 				throw new TypeError('The argument can not be null');
 			}
-			return func(this);
+			return func(this, null, ...param);
 		}
 		else{
 			let Second = second[_second];
@@ -40,7 +40,7 @@ function Multimethod(_second){
 			if(!func){
 				throw new TypeError('The argument can not be ' + Second.name);
 			}
-			return func(this, second);
+			return func(this, second, ...param);
 		}
 	}
 	method.mapping = mapping;

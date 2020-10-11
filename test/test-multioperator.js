@@ -127,5 +127,38 @@ describe('Multioperator', ()=>{
 			assert.ok(method);
 		});
 	});
+	
+	describe('with param', ()=>{
+		let approx = new Multioperator('approx');
+		let epsilon = new Multioperator('epsilon');
+		
+		approx.def(Number, Number, (a,b, eps)=>{
+			eps = eps || Number.EPSILON;
+			return Math.abs(a-b)<=eps;
+		});
+		
+		epsilon.def(Number, (a, _, eps)=>{
+			eps = eps || Number.EPSILON;
+			return Math.abs(a)<eps;
+		});
+		
+		epsilon.def(Number, Number, (a, eps)=>{
+			return a[epsilon](null, eps);
+		});
+		
+		it('use params', ()=>{
+			assert.ok((5)[approx](4, 2));
+			assert.ok(!(5)[approx](4, 0.4));
+		});
+		
+		it('param with unar', ()=>{
+			assert.ok((1)[epsilon](null,2));
+		});
+
+		it('1', ()=>{
+			assert.ok((1)[epsilon](2));
+			assert.ok(!(1)[epsilon]());
+		});
+	});
 
 });

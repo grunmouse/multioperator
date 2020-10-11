@@ -14,8 +14,9 @@ const {MapOfSet} = require('@grunmouse/special-map');
  * @property {Symbol} key - ключ оператора (используется для идентификации оператора и создания методов)
  */
 class Multioperator{
-	constructor(name){
+	constructor(name, description){
 		this.name = name;
+		this.description = description;
 		this._first = Symbol(name + '[first]');
 		this._second = Symbol(name + '[second]');
 		this.key = this._first;
