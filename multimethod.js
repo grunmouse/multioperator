@@ -36,6 +36,10 @@ function Multimethod(_second){
 		}
 		else{
 			let Second = second[_second];
+			if(!Second){
+				Second = second.constructor;
+				throw new TypeError('The argument can not be ' + Second.name);
+			}
 			let func = mapping.get(Second);
 			if(!func){
 				throw new TypeError('The argument can not be ' + Second.name);
