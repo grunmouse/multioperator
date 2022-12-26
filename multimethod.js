@@ -1,6 +1,4 @@
 
-const WeakMapWithNull = require('./weak-map-with-null.js');
-
 /**
  * @typedef {Function<(F, ?S)=>(any)>} MethodImplementation<F, S>
  * @typeparam F - конструктор первого аргумента
@@ -15,7 +13,7 @@ const WeakMapWithNull = require('./weak-map-with-null.js');
  * @typedef {Function<(?any)=>(any)>} Multimethod
  * @param {?any} - второй аргумент оператора, по конструктору которого будет выбрана реализация метода
  * @return {any} - результат выполнения метода
- * @property {WeakMapWithNull<(Constructor|null).MethodImplementation>} mapping - карта реализации методов
+ * @property {Map<(Constructor|null).MethodImplementation>} mapping - карта реализации методов
  */
 
 /**
@@ -23,29 +21,26 @@ const WeakMapWithNull = require('./weak-map-with-null.js');
  * @param {Symbol} _second - ключ второго аргумента мультиметода
  * @return {Multimethod}
  */
-function Multimethod(_second){
+function Multimethod(_second, MOP){
 	const mapping = new Map();
 	
 	const method = function(second, ...param){
+		let func;
 		if(second == null){
-			let func = mapping.get(null);
-			if(!func){
-				throw new TypeError('The argument can not be null');
-			}
-			return func(this, null, ...param);
+			func = mapping.get(null);
 		}
 		else{
 			let Second = second[_second];
-			if(!Second){
-				Second = second.constructor;
-				throw new TypeError('The argument can not be ' + Second.name);
+			if(Second){
+				func = mapping.get(Second);
 			}
-			let func = mapping.get(Second);
-			if(!func){
-				throw new TypeError('The argument can not be ' + Second.name);
-			}
-			return func(this, second, ...param);
 		}
+		if(!func){
+			let Second = second && (second[_second] || second.constructor);
+			let second_name = Second ? Second.name : 'null';
+			throw new TypeError('The argument can not be ' + second_name);
+		}
+		return func(this, second, ...param);
 	}
 	method.mapping = mapping;
 	

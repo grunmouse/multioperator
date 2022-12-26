@@ -20,6 +20,9 @@ class Multioperator{
 		this._first = Symbol(name + '[first]');
 		this._second = Symbol(name + '[second]');
 		this.key = this._first;
+		this._alias = new Set()
+		this._alias.add(this);
+		this.owners = new Set();
 	}
 	
 	valueOf(){
@@ -36,12 +39,14 @@ class Multioperator{
 	}
 	
 	static *itrSecond(Second){
-		if(Second[secondSet]) for(let [oper, First] of Second[secondSet]){
-			let method = First.prototype[oper._first];
-			let func = method.mapping.get(Second);
-			yield [oper, First, Second, func];
+		if(Second[secondSet]) for(let [oper, firsts] of Second[secondSet]){
+			for(let First of firsts){
+				let method = First.prototype[oper._first];
+				let func = method.mapping.get(Second);
+				yield [oper, First, Second, func];
+			}
 		}
-	}
+	} 
 	
 	/**
 	 * Ссылку на экземпляр можно использовать вместо ключа при вызове метода
@@ -89,7 +94,8 @@ class Multioperator{
 			Second = null;
 		}
 		
-		if(typeof func === 'symbol'){
+		//Вызов в качестве реализации существующего метода First по имени (символ или строка)
+		if(typeof func === 'symbol' || typeof func === 'string'){
 			func = caller(func);
 		}
 		
@@ -98,11 +104,15 @@ class Multioperator{
 			method = First.prototype[this._first];
 		}
 		else{
-			method = Multimethod(this._second);
+			method = Multimethod(this._second, this);
 			method[this._first] = First;
 			First.prototype[this._first] = method;
 			//a.prototype[_first][_first] === a
 			
+			//Заполняем owners
+			this.owners.add(First);
+			
+			//Заполняем firstSet
 			if(!First[firstSet]){
 				First[firstSet] = new Set();
 			}
@@ -112,13 +122,56 @@ class Multioperator{
 		if(Second){
 			Second.prototype[this._second] = Second;
 			// a.prototype[_second] === a
+			
+			//Заполняем secondSet
 			if(!Second[secondSet]){
-				Second[secondSet] = new MapOfSet();
+				Second[secondSet] = new Map();
 			}
-			Second[secondSet].add(this, First);
+			if(!Second[secondSet].has(this)){
+				Second[secondSet].set(this, new Set());
+			}
+			Second[secondSet].get(this).add(First);
 		}
 		
 		method.mapping.set(Second, func);
+	}
+	
+	/**
+	 * Клонирует все реализации переданного метода в текущий
+	 */
+	_defAs(mop){
+		for(let First of mop.owners){
+			let method = First.prototype[mop._first];
+			for(let [Second, func] of method.mapping){
+				this.def(First, Second, func);
+			}
+		}
+	}
+	
+	/**
+	 * Связывает два мультиопераора как псевдонимы друг друга
+	 * добавляет во все мультиоператоры, считающиеся псевдонимами друг друга, 
+	 * одно и то же общее множество псевдонимов
+	 */
+	addAsAlias(mop){
+		let newAlias = new Set([...this._alias, ...mop._alias]);
+		for(let op of newAlias){
+			op._alias = newAlias;
+		}
+		
+		this._defAs(mop);
+		mop._defAs(this);
+	}
+	
+	/**
+	 * Итерирует алиасы, кроме текущего объекта
+	 */
+	*aliases(){
+		for(let op of this._alias){
+			if(op !== this){
+				yield op;
+			}
+		}
 	}
 	
 	/**
@@ -150,7 +203,7 @@ class Multioperator{
 				}
 			}
 			else{
-				return method.mapping(null);
+				return method.mapping.get(null);
 			}
 		}
 	}
