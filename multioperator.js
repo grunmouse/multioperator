@@ -5,7 +5,7 @@ const caller = (symbol)=>(a, b)=>(a[symbol](b));
 const firstSet = Symbol('first-set');
 const secondSet = Symbol('second-set');
 
-const {MapOfSet} = require('@grunmouse/special-map');
+//const {MapOfSet} = require('@grunmouse/special-map');
 
 /**
  * Представляет бинарную мультифункцию, возможно с null во втором операнде

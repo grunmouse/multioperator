@@ -13,8 +13,5 @@
     "name": "Rakov",
     "email": "grunmouse@mail.ru"
   },
-  "license": "MIT",
-  "dependencies": {
-    "@grunmouse/special-map": "link:..\\special-map"
-  }
+  "license": "MIT"
 }
