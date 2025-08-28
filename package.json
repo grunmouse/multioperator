@@ -9,7 +9,7 @@
   "engine": {
     "node": ">=9.5.0"
   },
-  "scripts: {
+  "scripts": {
     "test":"mocha test"
   },
   "author": {
