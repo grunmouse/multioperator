@@ -9,6 +9,9 @@
   "engine": {
     "node": ">=9.5.0"
   },
+  "scripts: {
+    "test":"mocha test"
+  },
   "author": {
     "name": "Rakov",
     "email": "grunmouse@mail.ru"
