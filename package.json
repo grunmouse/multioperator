@@ -10,11 +10,14 @@
     "node": ">=9.5.0"
   },
   "scripts": {
-    "test":"mocha test"
+    "test": "mocha test"
   },
   "author": {
     "name": "Rakov",
     "email": "grunmouse@mail.ru"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^11.7.1"
+  }
 }
